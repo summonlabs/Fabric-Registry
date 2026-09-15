@@ -1,0 +1,24 @@
+@PACKAGE_INIT@
+
+# Fabric Registry package configuration.
+#
+# Consume it with:
+#
+#   find_package(FabricRegistry CONFIG REQUIRED)
+#   target_link_libraries(app PRIVATE SummonSoftwareLabs::FabricRegistry)
+#
+# Fabric Registry has no third-party dependencies, so nothing has to be
+# located here. The Windows system libraries the library links (ws2_32,
+# iphlpapi, setupapi, ole32) are recorded on the imported target itself.
+
+include(CMakeFindDependencyMacro)
+
+set(FabricRegistry_VERSION "@PROJECT_VERSION@")
+
+include("${CMAKE_CURRENT_LIST_DIR}/FabricRegistryTargets.cmake")
+
+# Convenience for consumers that add the headers to their own include path
+# instead of linking the imported target.
+set_and_check(FabricRegistry_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+
+check_required_components(FabricRegistry)
