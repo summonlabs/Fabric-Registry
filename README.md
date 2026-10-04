@@ -1,7 +1,6 @@
 # Fabric Registry
 
-Fabric Registry is the canonical identity and registration runtime of the
-Distributed Fabric Infrastructure ("Fabric OS") stack. It answers one question:
+Fabric Registry is the canonical identity and registration runtime for data-center fabric infrastructure. It answers one question:
 
 > What fabric infrastructure entities exist under this authority domain, what are
 > their canonical identities and current generations, who is authorized to
