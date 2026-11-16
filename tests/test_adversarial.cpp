@@ -918,4 +918,23 @@ FR_TEST_CASE(adversarial, a_coordinator_refuses_to_start_on_a_corrupt_state_file
   frtest::remove_state(path);
 }
 
+FR_TEST_CASE(adversarial, a_second_coordinator_cannot_take_a_listening_port) {
+  CoordinatorOptions options;
+  options.listen = Endpoint{"127.0.0.1", 0};
+  options.registry = frtest::test_options(47);
+  options.transport.poll_interval = std::chrono::milliseconds(5);
+  std::string error;
+  std::unique_ptr<Coordinator> first = Coordinator::start(options, error);
+  FR_CHECK_MSG(first != nullptr, "the first coordinator did not start: " + error);
+  // Two coordinators must never share one listening port: the second start fails.
+  CoordinatorOptions second_options = options;
+  second_options.listen = first->endpoint();
+  second_options.registry = frtest::test_options(48);
+  std::string second_error;
+  std::unique_ptr<Coordinator> second = Coordinator::start(second_options, second_error);
+  FR_CHECK_MSG(second == nullptr, "a second coordinator started on a port another one is listening on");
+  if (second != nullptr) second->stop();
+  first->stop();
+}
+
 int main(int argc, char** argv) { return frtest::run_all(argc, argv); }

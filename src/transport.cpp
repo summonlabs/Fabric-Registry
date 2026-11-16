@@ -526,7 +526,13 @@ std::optional<TcpListener> TcpListener::bind(const Endpoint& endpoint, std::stri
     }
     // Closed on every path out of this iteration.
     Socket owned = Socket::adopt(static_cast<std::intptr_t>(handle));
+#if defined(_WIN32)
+    // SO_REUSEADDR on Windows lets a second socket bind a port that is still
+    // listening; exclusive use makes that second bind fail instead.
+    (void)set_boolean_option(handle, SOL_SOCKET, SO_EXCLUSIVEADDRUSE, true);
+#else
     (void)set_boolean_option(handle, SOL_SOCKET, SO_REUSEADDR, true);
+#endif
     if (candidate->ai_family == AF_INET6) {
       // A wildcard IPv6 listener also serves IPv4 peers.
       (void)set_boolean_option(handle, IPPROTO_IPV6, IPV6_V6ONLY, false);
